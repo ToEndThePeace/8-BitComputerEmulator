@@ -4,7 +4,8 @@ This document is non-authoritative. In cases where it differs from the spec, the
 spec is correct.
 
 ## ALU ops
-```
+
+``` text
 ADD  10100000 00000aaa 00000bbb
 SUB  10100001 00000aaa 00000bbb
 MUL  10100010 00000aaa 00000bbb
@@ -25,7 +26,8 @@ SHR  10101101 00000aaa 00000bbb
 ```
 
 ## PC mutators
-```
+
+``` text
 CALL 01010000 00000rrr
 RET  00010001
 
@@ -42,7 +44,8 @@ JGE  01011010 00000rrr
 ```
 
 ## Other
-```
+
+``` text
 NOP  00000000
 
 HLT  00000001 
