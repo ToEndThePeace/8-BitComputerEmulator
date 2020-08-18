@@ -1,0 +1,15 @@
+# store 170 into register 8
+10000010
+00000111
+10101010
+# print it
+01000111
+00000111
+# perform NOT on the value
+01101001
+00000111
+# print it (should now be 85)
+01000111
+00000111
+# halt
+00000001
