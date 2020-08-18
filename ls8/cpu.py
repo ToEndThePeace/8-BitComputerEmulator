@@ -18,14 +18,6 @@ RET
 
 Maybe I can do this?
 ST
-
-
-come back to these
-PRA 
-SHL
-SHR
-SUB
-XOR
 """
 
 import sys
@@ -49,15 +41,19 @@ class CPU:
         # alu operation table
         self.alutable = {}
         self.alutable[0b0] = "ADD"
+        self.alutable[0b1] = "SUB"
         self.alutable[0b10] = "MUL"
+        self.alutable[0b11] = "DIV"
         self.alutable[0b0111] = "CMP"
         self.alutable[0b110] = "DEC"
         self.alutable[0b101] = "INC"
-        self.alutable[0b11] = "DIV"
         self.alutable[0b100] = "MOD"
         self.alutable[0b1000] = "AND"
         self.alutable[0b1010] = "OR"
         self.alutable[0b1001] = "NOT"
+        self.alutable[0b1011] = "XOR"
+        self.alutable[0b1100] = "SHL"
+        self.alutable[0b1101] = "SHR"
 
         # non-alu instruction definitions
         self.branchtable = {}
@@ -65,6 +61,7 @@ class CPU:
         self.branchtable[0b10] = self.LDI
         self.branchtable[0b11] = self.LD
         self.branchtable[0b111] = self.PRN
+        self.branchtable[0b1000] = self.PRA
 
     def ram_read(self):
         return self.reg[self.mar]
@@ -84,6 +81,8 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
+        elif op == "SUB":
+            self.reg[reg_a] -= self.reg[reg_b]
         elif op == "DEC":
             self.reg[reg_a] -= 1
         elif op == "INC":
@@ -101,6 +100,12 @@ class CPU:
         elif op == "NOT":
             # calculate bitwise not with XOR mask
             self.reg[reg_a] ^= 0b11111111
+        elif op == "XOR":
+            self.reg[reg_a] ^= self.reg[reg_b]
+        elif op == "SHL":
+            self.reg[reg_a] <<= self.reg[reg_b]
+        elif op == "SHR":
+            self.reg[reg_a] >>= self.reg[reg_b]
         elif op == "CMP":
             diff = self.reg[reg_a] - self.reg[reg_b]
             if diff < 0:
@@ -148,6 +153,10 @@ class CPU:
     def PRN(self, reg_index):
         self.mar = reg_index
         print(self.ram_read())
+
+    def PRA(self, reg_index):
+        self.mar = reg_index
+        print(chr(self.ram_read()))
 
     def run(self):
         """Run the CPU."""
