@@ -11,8 +11,6 @@ JGT
 JLE
 JMP
 JNE
-POP
-PUSH
 RET
 
 
@@ -68,6 +66,7 @@ class CPU:
         self.branchtable[0b1] = self.HLT
         self.branchtable[0b10] = self.LDI
         self.branchtable[0b11] = self.LD
+        self.branchtable[0b100] = self.ST
         self.branchtable[0b111] = self.PRN
         self.branchtable[0b1000] = self.PRA
         self.branchtable[0b0110] = self.POP
@@ -88,7 +87,7 @@ class CPU:
 
     def PUSH(self, reg_index):
         # print(self.ram[0xf0:0xf4])
-        
+
         self.mar = reg_index
         value = self.ram_read()
         # print(reg_index, value)
@@ -172,10 +171,16 @@ class CPU:
         self.ram_write()
 
     def LD(self, reg_a, reg_b):
-        print(self.ram[:5])
+        # print(self.ram[:5])
         self.mar = reg_a
         self.mdr = self.ram[self.reg[reg_b]]
         self.ram_write()
+
+    def ST(self, reg_a, reg_b):
+        # print(f"{reg_a}: {self.reg[reg_a]}")
+        # print(f"{reg_b}: {self.reg[reg_b]}")
+        # print(bin(self.reg[reg_a]), bin(self.reg[7]))
+        self.ram[self.reg[reg_a]] = self.reg[reg_b]
 
     def PRN(self, reg_index):
         self.mar = reg_index
@@ -197,6 +202,7 @@ class CPU:
             setsPC = (ir >> 4) & 0b1
             isALU = (ir >> 5) & 0b1
             num_args = ir >> 6
+            # print(instruction_code, num_args)
 
             # if it's an alu function, process it through the alu
             if num_args == 0:
