@@ -30,7 +30,13 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.reg = [0] * 8
+
+        # program pointer
         self.pc = 0
+        # stack pointer
+        self.sp = 0xF4
+
+        # ram edit values?
         self.mar = 0
         self.mdr = 0
         self.running = True
@@ -64,6 +70,8 @@ class CPU:
         self.branchtable[0b11] = self.LD
         self.branchtable[0b111] = self.PRN
         self.branchtable[0b1000] = self.PRA
+        self.branchtable[0b0110] = self.POP
+        self.branchtable[0b0101] = self.PUSH
 
     def ram_read(self):
         return self.reg[self.mar]
@@ -77,6 +85,22 @@ class CPU:
         for instruction in program:
             self.ram[address] = instruction
             address += 1
+
+    def PUSH(self, reg_index):
+        # print(self.ram[0xf0:0xf4])
+        
+        self.mar = reg_index
+        value = self.ram_read()
+        # print(reg_index, value)
+        self.sp -= 1
+        self.ram[self.sp] = value
+
+    def POP(self, reg_index):
+        # print(self.ram[0xf0:0xf4])
+        self.mar = reg_index
+        self.mdr = self.ram[self.sp]
+        self.sp += 1
+        self.ram_write()
 
     def alu(self, op, reg_a=None, reg_b=None):
         """ALU operations."""
