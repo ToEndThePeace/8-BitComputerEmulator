@@ -35,6 +35,8 @@ class CPU:
         self.mdr = 0
         self.running = True
 
+        self.stack = []
+
         # set comparison flags default to 0 (last 3 bits are L, G, E)
         self.FL = 0b00000000
 
@@ -147,7 +149,7 @@ class CPU:
 
     def LD(self, reg_a, reg_b):
         self.mar = reg_a
-        self.mdr = self.reg[reg_b]
+        self.mdr = self.ram[self.reg[reg_b]]
         self.ram_write()
 
     def PRN(self, reg_index):
@@ -163,6 +165,7 @@ class CPU:
         while self.running:
             # grab the IR
             ir = self.ram[self.pc]
+            # print(ir)
 
             # pull out the relevant data to be processed
             instruction_code = ir & 0b1111
