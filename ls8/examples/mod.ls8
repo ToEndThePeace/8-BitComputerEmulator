@@ -1,20 +1,20 @@
-# store a value (6) in register 8
+# store a value (6) in register 0
 10000010
-00000111
+00000000
 00000110
-# store value 23 in register 7
+# store value 23 in register 1
 10000010
-00000110
+00000001
 00010111
 00000000 # NO-OP
-# reg7 %= reg8
+# reg1 %= reg0
 10100100
-00000110
-00000111
+00000001
+00000000
 00000000 # NO-OP
 00000000 # NO-OP
-# print register 7 (should be 5)
+# print register 1 (should be 5)
 01000111
-0000110
+00000001
 # halt
 00000001

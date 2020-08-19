@@ -34,7 +34,7 @@ class CPU:
         # program pointer
         self.pc = 0
         # stack pointer
-        self.sp = 0xF4
+        self.reg[7] = 0xF4
 
         # ram edit values?
         self.mar = 0
@@ -92,14 +92,14 @@ class CPU:
         self.mar = reg_index
         value = self.ram_read()
         # print(reg_index, value)
-        self.sp -= 1
-        self.ram[self.sp] = value
+        self.reg[7] -= 1
+        self.ram[self.reg[7]] = value
 
     def POP(self, reg_index):
         # print(self.ram[0xf0:0xf4])
         self.mar = reg_index
-        self.mdr = self.ram[self.sp]
-        self.sp += 1
+        self.mdr = self.ram[self.reg[7]]
+        self.reg[7] += 1
         self.ram_write()
 
     def alu(self, op, reg_a=None, reg_b=None):
@@ -172,6 +172,7 @@ class CPU:
         self.ram_write()
 
     def LD(self, reg_a, reg_b):
+        print(self.ram[:5])
         self.mar = reg_a
         self.mdr = self.ram[self.reg[reg_b]]
         self.ram_write()
