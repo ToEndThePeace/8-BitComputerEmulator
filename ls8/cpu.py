@@ -2,14 +2,12 @@
 CPU functionality.
 
 methods needed to implement:
-CALL
 JEQ
 JGE
 JGT
 JLE
 JMP
 JNE
-RET
 INT
 """
 
@@ -27,15 +25,11 @@ class CPU:
 
         # program pointer
         self.pc = 0
-        # stack pointer
-        self.reg[7] = 0xF4
 
         # ram edit values?
         self.mar = 0
         self.mdr = 0
         self.running = True
-
-        self.stack = []
 
         # set comparison flags default to 0 (last 3 bits are L, G, E)
         self.FL = 0b00000000
@@ -85,6 +79,16 @@ class CPU:
         # Other properties
         self.time = None  # init with datetime.now() on run to handle timer interrupt
 
+        # reserved register addresses
+        self.IM = 5
+        self.IS = 6
+        self.SP = 7
+
+        # initialize reserved registers
+        self.reg[self.IM] = 0b00000001
+        self.reg[self.IS] = 0b00000000
+        self.reg[self.SP] = 0xF4
+
     def ram_read(self):
         return self.reg[self.mar]
 
@@ -104,14 +108,14 @@ class CPU:
         self.mar = reg_index
         value = self.ram_read()
         # print(reg_index, value)
-        self.reg[7] -= 1
-        self.ram[self.reg[7]] = value
+        self.reg[self.SP] -= 1
+        self.ram[self.reg[self.SP]] = value
 
     def POP(self, reg_index):
         # print(self.ram[0xf0:0xf4])
         self.mar = reg_index
-        self.mdr = self.ram[self.reg[7]]
-        self.reg[7] += 1
+        self.mdr = self.ram[self.reg[self.SP]]
+        self.reg[self.SP] += 1
         self.ram_write()
 
     def alu(self, op, reg_a=None, reg_b=None):
@@ -149,9 +153,9 @@ class CPU:
             if diff < 0:
                 self.FL = 0b100
             elif diff > 0:
-                self.FL = 0b10
+                self.FL = 0b010
             else:
-                self.FL = 0b1
+                self.FL = 0b001
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -192,7 +196,7 @@ class CPU:
     def ST(self, reg_a, reg_b):
         # print(f"{reg_a}: {self.reg[reg_a]}")
         # print(f"{reg_b}: {self.reg[reg_b]}")
-        # print(bin(self.reg[reg_a]), bin(self.reg[7]))
+        # print(bin(self.reg[reg_a]), bin(self.reg[self.SP]))
         self.ram[self.reg[reg_a]] = self.reg[reg_b]
 
     def PRN(self, reg_index):
@@ -204,79 +208,114 @@ class CPU:
         print(chr(self.ram_read()))
 
     # Jump Methods
-    def JMP(self, reg_index):
-        self.mar = reg_index
-        value = ram_read()
-        self.pc = value
-
     def CALL(self, reg_index):
         # push the next instruction's index onto the stack
         next_index = self.pc + 2
-        self.reg[7] -= 1
-        self.ram[self.reg[7]] = next_index
+        self.reg[self.SP] -= 1
+        self.ram[self.reg[self.SP]] = next_index
         self.pc = self.reg[reg_index]
 
     def RET(self):
         # print("b4: ", self.pc)
-        self.pc = self.ram[self.reg[7]]
+        self.pc = self.ram[self.reg[self.SP]]
         # print("af: ", self.pc)
-        self.reg[7] += 1
+        self.reg[self.SP] += 1
 
-    def JEQ(self):
-        pass
+    def JMP(self, reg_index):
+        self.pc = self.reg[reg_index]
 
-    def JGE(self):
-        pass
+    def JNE(self, reg_index):
+        test = 0b000
+        if self.FL | test == 0:
+            self.pc = self.reg[reg_index]
 
-    def JGT(self):
-        pass
+    def JEQ(self, reg_index):
+        test = 0b001
+        if self.FL & test > 0:
+            self.pc = self.reg[reg_index]
 
-    def JLT(self):
-        pass
+    def JGT(self, reg_index):
+        test = 0b010
+        if self.FL & test > 0:
+            self.pc = self.reg[reg_index]
 
-    def JLE(self):
-        pass
+    def JGE(self, reg_index):
+        test = 0b011
+        if self.FL & test > 0:
+            self.pc = self.reg[reg_index]
 
-    def JMP(self):
-        pass
+    def JLT(self, reg_index):
+        test = 0b100
+        if self.FL & test > 0:
+            self.pc = self.reg[reg_index]
 
-    def JNE(self):
-        pass
+    def JLE(self, reg_index):
+        test = 0b101
+        if self.FL & test > 0:
+            self.pc = self.reg[reg_index]
 
-    def INT(self):
-        pass
+    def INT(self, reg_index):
+        # bitwise OR to set the flag for whatever interrupt happened
+        # self.reg[self.IS] |= (2 ** (self.reg[reg_index] - 1))
+        self.reg[self.IS] |= 1 << self.reg[reg_index] - 1
 
     def IRET(self):
         # pop registers 6-0 off the stack in that order
         for i in range(7):
             self.mar = 6 - i
-            self.mdr = self.POP()
+            self.mdr = self.ram[self.reg[self.SP]]
+            self.reg[self.SP] += 1
             self.ram_write()
-        self.FL = self.POP()
-        self.pc = self.POP()
+        self.FL = self.ram[self.reg[self.SP]]
+        self.reg[self.SP] += 1
+        self.pc = self.ram[self.reg[self.SP]]
+        self.reg[self.SP] += 1
 
     # interrupt methods?
-    def timer_interrupt(self):
-        self.time = datetime.now()
+    def timer_interrupt_check(self):
+        x = datetime.now()
+        if (x - self.time).seconds >= 1:
+            self.time = x
+            self.reg[self.IS] |= 0b00000001
 
     def run(self):
-        # timer interrupt
+        # time init for interrupt checking
         self.time = datetime.now()
-
-        # interrupt handling
-        # masked_interrupts = self.reg[5] & self.reg[6]
-        # for i in range(8):
-        #     interrupted = ((masked_interrupts >> i) & 1) == 1
-        #     if interrupted:
-        #         pass
 
         # instruction fetch
         while self.running:
+
+            # interrupt checking
+            if self.reg[self.IS] != 0:
+                masked_interrupts = self.reg[self.IM] & self.reg[self.IS]
+                cur_bit = 0
+                interrupted = False
+                while cur_bit < 8 and not interrupted:
+                    interrupted = ((masked_interrupts >> cur_bit) & 1) == 1
+                    if interrupted:
+                        # print(self.pc, self.ram[self.pc])
+                        # clear the bit
+                        self.reg[self.IS] ^= 1 << cur_bit
+
+                        # push PC onto stack
+                        self.reg[self.SP] -= 1
+                        self.ram[self.reg[self.SP]] = self.pc
+                        # push FL onto stack
+                        self.reg[self.SP] -= 1
+                        self.ram[self.reg[self.SP]] = self.FL
+                        # push R0-R6 onto stack in that order
+                        for i in range(7):
+                            self.reg[self.SP] -= 1
+                            self.ram[self.reg[self.SP]] = self.reg[i]
+                        self.pc = self.ram[0xF8 + cur_bit]
+                    cur_bit += 1
+
+            self.timer_interrupt_check()
+
             # grab the IR
             # print(self.pc)
             ir = self.ram[self.pc]
             # print(ir)
-
             # pull out the relevant data to be processed
             instruction_code = ir & 0b1111
             setsPC = (ir >> 4) & 0b1
@@ -308,6 +347,8 @@ class CPU:
                 arg_b = self.ram[self.pc + 2]
                 if isALU:
                     self.alu(self.alutable[instruction_code], arg_a, arg_b)
+                elif setsPC:
+                    self.jumptable[instruction_code](arg_a, arg_b)
                 else:
                     self.branchtable[instruction_code](arg_a, arg_b)
 
