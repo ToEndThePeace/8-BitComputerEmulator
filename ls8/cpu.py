@@ -14,6 +14,7 @@ INT
 """
 
 import sys
+from datetime import datetime
 
 
 class CPU:
@@ -80,6 +81,9 @@ class CPU:
         self.branchtable[0b0110] = self.POP
         self.branchtable[0b0111] = self.PRN
         self.branchtable[0b1000] = self.PRA
+
+        # Other properties
+        self.time = None  # init with datetime.now() on run to handle timer interrupt
 
     def ram_read(self):
         return self.reg[self.mar]
@@ -251,8 +255,13 @@ class CPU:
         self.FL = self.POP()
         self.pc = self.POP()
 
+    # interrupt methods?
+    def timer_interrupt(self):
+        self.time = datetime.now()
+
     def run(self):
         # timer interrupt
+        self.time = datetime.now()
 
         # interrupt handling
         # masked_interrupts = self.reg[5] & self.reg[6]
