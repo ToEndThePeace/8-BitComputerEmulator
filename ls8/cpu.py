@@ -231,31 +231,43 @@ class CPU:
         test = 0b000
         if self.FL | test == 0:
             self.pc = self.reg[reg_index]
+        else:
+            self.pc += 2
 
     def JEQ(self, reg_index):
         test = 0b001
         if self.FL & test > 0:
             self.pc = self.reg[reg_index]
+        else:
+            self.pc += 2
 
     def JGT(self, reg_index):
         test = 0b010
         if self.FL & test > 0:
             self.pc = self.reg[reg_index]
+        else:
+            self.pc += 2
 
     def JGE(self, reg_index):
         test = 0b011
         if self.FL & test > 0:
             self.pc = self.reg[reg_index]
+        else:
+            self.pc += 2
 
     def JLT(self, reg_index):
         test = 0b100
         if self.FL & test > 0:
             self.pc = self.reg[reg_index]
+        else:
+            self.pc += 2
 
     def JLE(self, reg_index):
         test = 0b101
         if self.FL & test > 0:
             self.pc = self.reg[reg_index]
+        else:
+            self.pc += 2
 
     def INT(self, reg_index):
         # bitwise OR to set the flag for whatever interrupt happened
@@ -308,6 +320,10 @@ class CPU:
         self.time = datetime.now()
         self.keyboard_listener_start()
 
+        # printvals = {x: y for x, y in enumerate(self.ram[0:40])}
+
+        # print(printvals)
+
         # instruction fetch
         while self.running:
 
@@ -341,7 +357,7 @@ class CPU:
             # grab the IR
             # print(self.pc)
             ir = self.ram[self.pc]
-            # print(ir)
+            # print(bin(self.FL), bin(ir))
             # pull out the relevant data to be processed
             instruction_code = ir & 0b1111
             setsPC = (ir >> 4) & 0b1
