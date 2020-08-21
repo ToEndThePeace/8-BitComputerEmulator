@@ -1,33 +1,56 @@
-# LS-8: 8-Bit Computer Emulator V1.0
+# LS-8: 8-Bit Computer Emulator V2.0
 
 In this project, we attempted to implement a turing complete emulator of an 8-bit CPU in Python, the pedagogical purpose of the assignment being to understand more deeply how a programming language works. Through the creation of virtual RAM, the use of binary and hexadecimal integers, as well as subroutine CALL and RETURN functions, I definitely achieved a much deeper understanding of computer processing, as well as became more comfortable working with different number bases.
 
+Since achieving the minimum viable product, I have implemented my own changes to make the CPU feel more fun and functional.
+
 ## Important Files
 
+* [LS-8 CPU (Main Program!)](./ls8/ls8.py)
 * [LS-8 Specifications](./LS8-spec.md)
 * [LS-8 FAQ](./FAQ.md)
-* [LS-8 CPU Class](./ls8/cpu.py)
-* [CPU Loader](./ls8/ls8.py)
-* [LS-8 Programs (Proof of Functionality)](./ls8/examples)
+* [LS-8 Programs (Proof of Functionality)](./ls8/programs)
 * [ASM to LS-8 Compiler](./asm/asm.py)
 
 ## Running Programs on the LS-8
 
 The LS-8 is a console-based computer. When running the loader file, you must make sure you're in the proper directory and that you're passing in a valid program location through the command line.
 
-1. Move  into the `./ls8` directory:
+1. Move  into the `./ls8` directory (necessary to read in programs!):
 
     ``` bash
     cd ls8
     ```
 
-2. Call the loader file and pass in the address to a valid LS-8 program:
+2. Run the `ls8.py` file:
 
     ``` bash
-    python ls8 examples/printstr.ls8
+    python ls8.py
     ```
 
-And that's it! Assuming the input file uses the correct LS-8 binary syntax, the program should run as intended.
+Now your CPU is up and running! When prompted, enter the name of a valid LS-8 program in the `programs` directory. Errors are handled for nonexistent names, and should not negatively impact the user experience.
+
+If no extension is specified, `.ls8` is automatically appended to the filename you enter. For instance, entering
+
+``` input
+>> mult
+```
+
+will attempt to load the file
+
+``` input
+>> mult.ls8
+```
+
+See below for a list of reserved keywords that are the exception to this rule, and should not be used as program names.
+
+### Reserved Keywords
+
+* `exit` will cause the LS-8 to exit (shutdown)
+* `list` will print a list of the programs in the `programs` directory
+* `help` will print these keywords during runtime
+
+> **Tip:** The `esc` key will flag the program loop to exit, ending any loops. This is particulary useful for the given `interrupts.ls8` and `keyboard.ls8` example programs
 
 ## Notes About `.ls8` Syntax
 
@@ -42,15 +65,18 @@ And that's it! Assuming the input file uses the correct LS-8 binary syntax, the 
 
 ## V2 Checklist
 
-These goals, though they may take a large chunk of code to implement, are fairly straightforward and will not require the refactoring of any existing program files:
+### Implementation Complete
 
-* [ ] Put the `load()` method call inside the `run()` method, and create a system wherein users can load functions on the fly, and load another function when the first one is done executing
-* [ ] Move file input processing from `ls8.py` into the CPU `load()` method
-* [ ] Refactor ram functions
+On top of the desired features listed in the below checklist, this version also includes UI improvements and improvements to code readability and modularity.
 
-### Wishlist
+* [x] Put the `load()` method call inside the `run()` method, and create a system wherein users can load functions on the fly, and load another function when the first one is done executing
+* [x] Move file input processing from `ls8.py` into the CPU `load()` method
+* [x] Refactor ram functions
+* [x] Bonus: remove excess `print` statements and simplify `run()` loop
 
-These goals will be fairly difficult to implement, and will require the refactoring of any of the example program files that use the `RET` or `CALL` functions:
+### V3 Feature Wish List
+
+These goals will be fairly difficult to implement, and will require the refactoring of any of the example program files that use the `RET` or `CALL` functions. They will also cause the compiler and the `cpu.run()` method to require tweaks, and as such may not be appropriate for the desired simplicity of an 8-bit CPU (though they are still very possible).
 
 * [ ] Add parameters to subroutine `CALLs`
 * [ ] Add return values to `RET`

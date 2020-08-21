@@ -17,3 +17,4 @@
 00000000
 01010100 # JMP R3
 00000011
+# This program is EXPECTED to crash

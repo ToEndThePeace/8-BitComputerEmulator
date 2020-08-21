@@ -7,3 +7,8 @@ def flush_input():
         import sys
         import termios
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+
+
+def pause():
+    input("Press enter to continue...")
+    print()
