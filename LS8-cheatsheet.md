@@ -45,7 +45,7 @@ JGE  01011010 00000rrr
 
 ## Other
 
-``` text
+``` txt
 NOP  00000000
 
 HLT  00000001 
