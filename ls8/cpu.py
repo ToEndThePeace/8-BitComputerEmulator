@@ -229,8 +229,8 @@ class CPU:
         self.pc = self.reg[reg_index]
 
     def JNE(self, reg_index):
-        test = 0b000
-        if self.FL | test == 0:
+        test = 0b001
+        if self.FL != test:
             self.pc = self.reg[reg_index]
         else:
             self.pc += 2
