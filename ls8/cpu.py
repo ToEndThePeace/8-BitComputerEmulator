@@ -11,7 +11,7 @@ class CPU:
         self.reg = [0] * 8
 
         # program pointer
-        self.pc = 0
+        self.PC = 0
 
         # ram edit values?
         # self.mar = 0
@@ -22,46 +22,49 @@ class CPU:
         self.FL = 0b00000000
 
         # alu operation table
-        self.alutable = {}
-        self.alutable[0b0000] = "ADD"
-        self.alutable[0b0001] = "SUB"
-        self.alutable[0b0010] = "MUL"
-        self.alutable[0b0011] = "DIV"
-        self.alutable[0b0100] = "MOD"
-        self.alutable[0b0101] = "INC"
-        self.alutable[0b0110] = "DEC"
-        self.alutable[0b0111] = "CMP"
-        self.alutable[0b1000] = "AND"
-        self.alutable[0b1001] = "NOT"
-        self.alutable[0b1010] = "OR"
-        self.alutable[0b1011] = "XOR"
-        self.alutable[0b1100] = "SHL"
-        self.alutable[0b1101] = "SHR"
+        self.alutable = {
+            0b0000: "ADD",
+            0b0001: "SUB",
+            0b0010: "MUL",
+            0b0011: "DIV",
+            0b0100: "MOD",
+            0b0101: "INC",
+            0b0110: "DEC",
+            0b0111: "CMP",
+            0b1000: "AND",
+            0b1001: "NOT",
+            0b1010: "OR",
+            0b1011: "XOR",
+            0b1100: "SHL",
+            0b1101: "SHR"
+        }
 
         # jump functions
-        self.jumptable = {}
-        self.jumptable[0b0000] = self.CALL
-        self.jumptable[0b0001] = self.RET
-        self.jumptable[0b0010] = self.INT
-        self.jumptable[0b0011] = self.IRET
-        self.jumptable[0b0100] = self.JMP
-        self.jumptable[0b0101] = self.JEQ
-        self.jumptable[0b0110] = self.JNE
-        self.jumptable[0b0111] = self.JGT
-        self.jumptable[0b1000] = self.JLT
-        self.jumptable[0b1001] = self.JLE
-        self.jumptable[0b1010] = self.JGE
+        self.jumptable = {
+            0b0000: self.CALL,
+            0b0001: self.RET,
+            0b0010: self.INT,
+            0b0011: self.IRET,
+            0b0100: self.JMP,
+            0b0101: self.JEQ,
+            0b0110: self.JNE,
+            0b0111: self.JGT,
+            0b1000: self.JLT,
+            0b1001: self.JLE,
+            0b1010: self.JGE
+        }
 
         # non-alu instruction definitions
-        self.branchtable = {}
-        self.branchtable[0b0001] = self.HLT
-        self.branchtable[0b0010] = self.LDI
-        self.branchtable[0b0011] = self.LD
-        self.branchtable[0b0100] = self.ST
-        self.branchtable[0b0101] = self.PUSH
-        self.branchtable[0b0110] = self.POP
-        self.branchtable[0b0111] = self.PRN
-        self.branchtable[0b1000] = self.PRA
+        self.branchtable = {
+            0b0001: self.HLT,
+            0b0010: self.LDI,
+            0b0011: self.LD,
+            0b0100: self.ST,
+            0b0101: self.PUSH,
+            0b0110: self.POP,
+            0b0111: self.PRN,
+            0b1000: self.PRA
+        }
 
         # Interrupt properties
         self.time = None  # init with datetime.now() on run to handle timer interrupt
@@ -176,59 +179,59 @@ class CPU:
 
     # Jump Methods
     def CALL(self, reg_index, *args):
-        next_index = self.pc + 2
-        self.pc = self.reg[reg_index]
+        next_index = self.PC + 2
+        self.PC = self.reg[reg_index]
         self.reg[self.SP] -= 1
         self.ram_write(self.reg[self.SP], next_index)
 
     def RET(self, *args):
-        self.pc = self.ram_read(self.reg[self.SP])
+        self.PC = self.ram_read(self.reg[self.SP])
         self.reg[self.SP] += 1
 
     def JMP(self, reg_index, *args):
-        self.pc = self.reg[reg_index]
+        self.PC = self.reg[reg_index]
 
     def JNE(self, reg_index, *args):
         test = 0b001
         if self.FL != test:
-            self.pc = self.reg[reg_index]
+            self.PC = self.reg[reg_index]
         else:
-            self.pc += 2
+            self.PC += 2
 
     def JEQ(self, reg_index, *args):
         test = 0b001
         if self.FL & test > 0:
-            self.pc = self.reg[reg_index]
+            self.PC = self.reg[reg_index]
         else:
-            self.pc += 2
+            self.PC += 2
 
     def JGT(self, reg_index, *args):
         test = 0b010
         if self.FL & test > 0:
-            self.pc = self.reg[reg_index]
+            self.PC = self.reg[reg_index]
         else:
-            self.pc += 2
+            self.PC += 2
 
     def JGE(self, reg_index, *args):
         test = 0b011
         if self.FL & test > 0:
-            self.pc = self.reg[reg_index]
+            self.PC = self.reg[reg_index]
         else:
-            self.pc += 2
+            self.PC += 2
 
     def JLT(self, reg_index, *args):
         test = 0b100
         if self.FL & test > 0:
-            self.pc = self.reg[reg_index]
+            self.PC = self.reg[reg_index]
         else:
-            self.pc += 2
+            self.PC += 2
 
     def JLE(self, reg_index, *args):
         test = 0b101
         if self.FL & test > 0:
-            self.pc = self.reg[reg_index]
+            self.PC = self.reg[reg_index]
         else:
-            self.pc += 2
+            self.PC += 2
 
     def INT(self, reg_index, *args):
         # For now, I can't use this
@@ -241,7 +244,7 @@ class CPU:
             self.reg[self.SP] += 1
         self.FL = self.ram_read(self.reg[self.SP])
         self.reg[self.SP] += 1
-        self.pc = self.ram_read(self.reg[self.SP])
+        self.PC = self.ram_read(self.reg[self.SP])
         self.reg[self.SP] += 1
 
     # Interrupt methods
@@ -283,7 +286,7 @@ class CPU:
                     self.reg[self.IS] ^= 1 << cur_bit
                     # push PC onto stack
                     self.reg[self.SP] -= 1
-                    self.ram_write(self.reg[self.SP], self.pc)
+                    self.ram_write(self.reg[self.SP], self.PC)
                     # push FL onto stack
                     self.reg[self.SP] -= 1
                     self.ram_write(self.reg[self.SP], self.FL)
@@ -291,7 +294,7 @@ class CPU:
                     for i in range(7):
                         self.reg[self.SP] -= 1
                         self.ram_write(self.reg[self.SP], self.reg[i])
-                    self.pc = self.ram_read(0xF8 + cur_bit)
+                    self.PC = self.ram_read(0xF8 + cur_bit)
                 cur_bit += 1
 
     def run(self):
@@ -305,7 +308,7 @@ class CPU:
             self.timer_interrupt_check()
 
             # grab the IR
-            ir = self.ram[self.pc]
+            ir = self.ram[self.PC]
 
             # pull out the relevant data from the IR to be processed
             instruction_code = ir & 0b1111
@@ -315,8 +318,8 @@ class CPU:
 
             # if it's an alu function, process it through the alu
             # if it's a jump function, process accordingly
-            arg_a = self.ram[self.pc + 1]
-            arg_b = self.ram[self.pc + 2]
+            arg_a = self.ram[self.PC + 1]
+            arg_b = self.ram[self.PC + 2]
             if isALU:
                 self.alu(self.alutable[instruction_code], arg_a, arg_b)
             elif setsPC:
@@ -327,7 +330,7 @@ class CPU:
 
             # after a process that doesn't set PC, increment the pc
             if not setsPC:
-                self.pc += num_args + 1
+                self.PC += num_args + 1
 
         # clear listener after while loop ends
         self.keyboard_listener_stop()
