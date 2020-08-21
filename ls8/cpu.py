@@ -225,6 +225,7 @@ class CPU:
         self.reg[self.SP] += 1
 
     def JMP(self, reg_index):
+        # print(reg_index, self.reg, self.ram[self.reg[self.SP]])
         self.pc = self.reg[reg_index]
 
     def JNE(self, reg_index):
@@ -326,6 +327,7 @@ class CPU:
 
         # instruction fetch
         while self.running:
+            # print(self.ram[self.reg[self.SP]])
 
             # interrupt checking
             if self.reg[self.IS] != 0:
