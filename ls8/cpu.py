@@ -1,16 +1,3 @@
-"""
-CPU functionality.
-
-methods needed to implement:
-JEQ
-JGE
-JGT
-JLE
-JMP
-JNE
-INT
-"""
-
 import sys
 from utils import flush_input
 from pynput import keyboard
@@ -18,10 +5,8 @@ from datetime import datetime
 
 
 class CPU:
-    """Main CPU class."""
-
     def __init__(self):
-        """Construct a new CPU."""
+        # Data Storage
         self.ram = [0] * 256
         self.reg = [0] * 8
 
