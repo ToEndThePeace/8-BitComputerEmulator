@@ -48,7 +48,8 @@ These goals, though they may take a large chunk of code to implement, are fairly
 
 * [ ] Put the `load()` method call inside the `run()` method, and create a system wherein users can load functions on the fly, and load another function when the first one is done executing
 * [x] Move file input processing from `ls8.py` into the CPU `load()` method
-* [ ] Refactor ram functions
+* [x] Refactor ram functions
+* [x] Bonus: remove excess print statements and simplify run loop
 
 ### Wishlist
 
