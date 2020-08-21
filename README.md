@@ -14,7 +14,7 @@ Since achieving the minimum viable product, I have implemented my own changes to
 
 ## Running Programs on the LS-8
 
-The LS-8 is a console-based computer. When running the loader file, you must make sure you're in the proper directory and that you're passing in a valid program location through the command line.
+The LS-8 is a console-based computer. When running the loader file, you must make sure you're in the proper directory in order to ensure that programs can be correctly loaded.
 
 1. Move  into the `./ls8` directory (necessary to read in programs!):
 
