@@ -1,0 +1,12 @@
+10000010  # LDI R0, 0
+00000000
+00000000
+10000011  # LD R1, R0
+00000001
+00000000
+# print the decimal value of the 
+# first program instruction (stored in R1)
+01000111 # PRN R1
+00000001
+# halt
+00000001

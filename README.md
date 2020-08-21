@@ -1,39 +1,47 @@
-# Computer Architecture
+# LS-8: 8-Bit Computer Emulator
 
-## Project
+In this project, we attempted to implement a turing complete emulator of an 8-bit CPU in Python, the pedagogical purpose of the assignment being to understand more deeply how a programming language works. Through the creation of virtual RAM, the use of binary and hexadecimal integers, as well as subroutine CALL and RETURN functions, I definitely achieved a much deeper understanding of computer processing, as well as became more comfortable working with different number bases.
 
-* [Implement the LS-8 Emulator](ls8/)
+## Important Files
 
-## Task List: add this to the first comment of your Pull Request
+* [LS-8 Specifications](./LS8-spec.md)
+* [LS-8 FAQ](./FAQ.md)
+* [LS-8 CPU Class](./ls8/cpu.py)
+* [CPU Loader](./ls8/ls8.py)
+* [LS-8 Programs (Proof of Functionality)](./ls8/examples)
+* [ASM to LS-8 Compiler](./asm/asm.py)
 
-### Day 1: Get `print8.ls8` running
+## Running Programs on the LS-8
 
-- [ ] Inventory what is here
-- [ ] Implement the `CPU` constructor
-- [ ] Add RAM functions `ram_read()` and `ram_write()`
-- [ ] Implement the core of `run()`
-- [ ] Implement the `HLT` instruction handler
-- [ ] Add the `LDI` instruction
-- [ ] Add the `PRN` instruction
+The LS-8 is a console-based computer. When running the loader file, you must make sure you're in the proper directory and that you're passing in a valid program location through the command line.
 
-### Day 2: Add the ability to load files dynamically, get `mult.ls8` running
+1. Move  into the `./ls8` directory:
 
-- [ ] Un-hardcode the machine code
-- [ ] Implement the `load()` function to load an `.ls8` file given the filename
-      passed in as an argument
-- [ ] Implement a Multiply instruction (run `mult.ls8`)
+    ``` bash
+    cd ls8
+    ```
 
-### Day 3: Stack
+2. Call the loader file and pass in the address to a valid LS-8 program:
 
-- [ ] Implement the System Stack and be able to run the `stack.ls8` program
+    ``` bash
+    python ls8 examples/printstr.ls8
+    ```
 
-### Day 4: Get `call.ls8` running
+And that's it! Assuming the input file uses the correct LS-8 binary syntax, the program should run as intended.
 
-- [ ] Implement the CALL and RET instructions
-- [ ] Implement Subroutine Calls and be able to run the `call.ls8` program
+## Notes About `.ls8` Syntax
 
-### Stretch
+`.ls8` files need to follow strict guidelines to run, as the CPU loader is not very "smart".
 
-- [ ] Add the timer interrupt to the LS-8 emulator
-- [ ] Add the keyboard interrupt to the LS-8 emulator
-- [ ] Write an LS-8 assembly program to draw a curved histogram on the screen
+* Instructions _must_ be written in `8-bit binary` code.
+* Only _one_ instruction per line.
+* Instructions may be followed by comments, which the loader ignores.
+* Blank lines _are_ allowed, and are ignored by the loader.
+* Comments may be alone on a line, and are ignored by the loader.
+* Comments _must_ begin with `#` , or the loader will throw an error and stop program execution.
+
+## Conclusion
+
+That's all you need to know to begin programming with the LS-8! If you found this program particularly interesting or would like to know more, feel free to reach out to me via [LinkedIn](https://www.linkedin.com/in/brandon-ramirez-b00974b5/).
+
+***Thanks for reading!***

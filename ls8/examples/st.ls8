@@ -1,0 +1,26 @@
+# needs to push a value to stack first
+10000010 # LDI RO, 5
+00000000
+00000101
+
+01000101 # PUSH R0
+00000000
+# new stack - [0, ..., 0, 5] - 5 is at address 0xF3 or 0b11110011
+10000010 # LDI R1, 11110011 (mem address of current stack top)
+00000001
+11110011
+
+10000010 # LDI R0, 10 - value to overwrite the 5 on the stack with
+00000000
+00001010
+
+10000100 # ST R1, R0 - overwrite top of stack with value 10
+00000001
+00000000
+
+01000110 # POP R0 - store the 10 off top of stack in register 0
+00000000
+01000111 # PRN R0 - print to check (should print 10)
+00000000
+
+00000001 # HLT
