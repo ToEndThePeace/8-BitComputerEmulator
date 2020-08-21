@@ -98,8 +98,27 @@ class CPU:
     def ram_write(self):
         self.reg[self.mar] = self.mdr
 
-    def load(self, program):
+    def load(self, prog_file):
         """Load a program into memory."""
+
+        program = []
+        try:
+            with open(prog_file) as f:
+                for line in f:
+                    x = line.split()
+                    if len(x) == 0 or x[0][0] == "#":
+                        continue
+
+                    try:
+                        program.append(int(x[0], 2))
+                    except ValueError:
+                        print(f"Invalid value: {x[0]}")
+                        self.running = False
+                        break
+        except FileNotFoundError:
+            self.running = False
+            print(f"Couldn't open file: {sys.argv[1]}")
+
         address = 0
         for instruction in program:
             self.ram[address] = instruction

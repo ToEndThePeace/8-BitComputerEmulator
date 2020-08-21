@@ -32,5 +32,8 @@
 # print(bin(0b010 | 0b000))
 # print(bin(0b100 | 0b000))
 
-for n in range(8):
-    print(bin(0b11111111 ^ 1 << n))
+# for n in range(8):
+#     print(bin(0b11111111 ^ 1 << n))
+
+print("df asdsf  \n\
+      sdfsdf dd \n".strip().split())

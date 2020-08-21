@@ -29,6 +29,8 @@ The LS-8 is a console-based computer. When running the loader file, you must mak
 
 And that's it! Assuming the input file uses the correct LS-8 binary syntax, the program should run as intended.
 
+> **Tip:** Pressing `ESC` at any time will flag the run loop to exit. Useful if you find yourself stuck in any infinite loops!
+
 ## Notes About `.ls8` Syntax
 
 `.ls8` files need to follow strict guidelines to run, as the CPU loader is not very "smart".
@@ -45,7 +47,7 @@ And that's it! Assuming the input file uses the correct LS-8 binary syntax, the 
 These goals, though they may take a large chunk of code to implement, are fairly straightforward and will not require the refactoring of any existing program files:
 
 * [ ] Put the `load()` method call inside the `run()` method, and create a system wherein users can load functions on the fly, and load another function when the first one is done executing
-* [ ] Move file input processing from `ls8.py` into the CPU `load()` method
+* [x] Move file input processing from `ls8.py` into the CPU `load()` method
 * [ ] Refactor ram functions
 
 ### Wishlist
