@@ -663,7 +663,7 @@ result in registerA.
 
 Machine code:
 
-``` 
+``` python
 10101011 00000aaa 00000bbb
 AB 0a 0b
 ```
