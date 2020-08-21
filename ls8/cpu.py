@@ -12,6 +12,8 @@ INT
 """
 
 import sys
+from utils import flush_input
+from pynput import keyboard
 from datetime import datetime
 
 
@@ -76,8 +78,9 @@ class CPU:
         self.branchtable[0b0111] = self.PRN
         self.branchtable[0b1000] = self.PRA
 
-        # Other properties
+        # Interrupt properties
         self.time = None  # init with datetime.now() on run to handle timer interrupt
+        self.keyboard_listener = None
 
         # reserved register addresses
         self.IM = 5
@@ -278,9 +281,32 @@ class CPU:
             self.time = x
             self.reg[self.IS] |= 0b00000001
 
+    def keyboard_listener_start(self):
+        # keypress handler that sets the IS bit
+        def on_press(key):
+            if key == keyboard.Key.esc:
+                self.running = False
+            else:
+                if str(key)[:4] != "Key.":
+                    if (str(key)[0] == "<" and str(key)[-1] == ">"):
+                        return
+                    self.reg[self.IS] |= 0b00000010
+                    x = ord(str(key)[1])
+                    self.ram[0xf4] = x & 255
+
+        # keyboard listener start code
+        self.keyboard_listener = keyboard.Listener(
+            on_press=on_press
+        )
+        self.keyboard_listener.start()
+
+    def keyboard_listener_stop(self):
+        self.keyboard_listener.stop()
+
     def run(self):
         # time init for interrupt checking
         self.time = datetime.now()
+        self.keyboard_listener_start()
 
         # instruction fetch
         while self.running:
@@ -355,3 +381,8 @@ class CPU:
             # after a process that doesn't set PC, increment the pc
             if not setsPC:
                 self.pc += num_args + 1
+
+        self.keyboard_listener_stop()
+
+        # clear the input buffer to handle presses in peyboard interrupt test
+        flush_input()
