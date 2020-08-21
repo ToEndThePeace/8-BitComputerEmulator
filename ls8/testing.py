@@ -35,5 +35,4 @@
 # for n in range(8):
 #     print(bin(0b11111111 ^ 1 << n))
 
-print("df asdsf  \n\
-      sdfsdf dd \n".strip().split())
+
