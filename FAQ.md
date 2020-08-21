@@ -4,7 +4,7 @@
 
 ### Common Problems
 
-* [Do you have some handy code for helping trace what the CPU is doing?](#q2000)
+* [Do you have some handy code for helping trace what the CPU is doing? Yes!](#q2000)
 
 ### General
 
